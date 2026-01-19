@@ -10,7 +10,7 @@
 #include <SPIFFS.h>
 #include <ESPmDNS.h>
 #include <DNSServer.h>
-#include <CircularBuffer.h>
+#include <CircularBuffer.hpp>
 #include <WiFiUdp.h>
 #include <ArduinoOTA.h>
 
@@ -43,6 +43,9 @@ private:
     String ssid, password, apiKey, deviceName;
     bool wifiConnected = false;
     bool connectedToApp = false;
+    bool inAPMode = false;
+    int wifiFailureCount = 0;
+    const int MAX_WIFI_FAILURES = 5;
     
     // Timing
     unsigned long lastSystemCheck = 0;
@@ -51,6 +54,8 @@ private:
     unsigned long lastTaskCheck = 0;
     unsigned long lastHeartbeat = 0;
     unsigned long bootTime = 0;
+    unsigned long lastAPModeReset = 0;
+    const unsigned long AP_MODE_TIMEOUT = 600000; // 10 minutes
     
     // Pin management
     PinConfig pins[10];
@@ -69,24 +74,20 @@ private:
     const String TASK_COMPLETE_URL = "https://p-sci.vercel.app/api/electronics/boards/task-complete";
     
     // Private methods
-    void setupWiFi();
     void startAPMode();
     void connectToWiFi();
-    void handleRoot();
     void handleNotFound();
-    void handleAddPin();
-    void handleControlPin();
-    void handleRemovePin();
-    void handleSerial();
-    void handleSystemInfo();
-    void handleTaskValidation();
-    void handleOTACheck();
-    void handleClientToggle();
-    void handleSaveWiFi();
-    
-    void addToMonitorBuffer(const String &message);
-    void checkWiFiConnection();
+    void handlePinControl();
+    void handleGetStats();
+    void handleGetSerial();
+    void setupWebRoutes();
+    void controlPin(int pinNum, String type, int value);
+    void addMonitorLine(String text);
+    float readCoreTemperature();
+    void handleCheckUpdate();
+    void connectToApp();
     void sendHeartbeat();
+    void fetchTaskInstructions();
     void checkForTaskInstructions();
     void validateProject(JsonObject validation);
     bool validateDigitalToggle(int pin, int expectedPeriod, int tolerance, int samples);
