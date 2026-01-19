@@ -1,6 +1,6 @@
 # P-Sci Arduino Library
 
-A powerful Arduino library for ESP32 that provides a complete web-based control panel with WiFi management, pin control, serial monitoring, and OTA firmware updates.
+A powerful Arduino library for ESP32 that connects p-sci a development board based on esp32 wroom to the P-sci platform and provides a complete web-based control panel with WiFi management, pin control, serial monitoring, and OTA firmware updates.
 
 ## Features
 
